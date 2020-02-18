@@ -19,6 +19,7 @@ class ViewController: UIViewController {
   @IBOutlet weak var nameLbl: UITextField!
   @IBOutlet weak var addressLbl: UITextField!
   @IBOutlet weak var sendOrderBtn: UIButton!
+  @IBOutlet weak var scrollView: UIScrollView!
   @IBOutlet weak var viewHeightConstraint: NSLayoutConstraint!
   
   var numberOfSimpleCoffees:Int = 0
@@ -32,9 +33,27 @@ class ViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    ref = Database.database().reference()
-    
     updateUI()
+    
+    ref = Database.database().reference()
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(keyboardWillShow),
+      name: UIResponder.keyboardWillShowNotification,
+      object: nil)
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(keyboardWillHide),
+      name: UIResponder.keyboardWillHideNotification,
+      object: nil)
+  }
+  
+  override func viewWillDisappear(_ animated: Bool) {
+      super.viewWillDisappear(animated)
+      NotificationCenter.default.removeObserver(self)
   }
   
   //  MARK: - IBActions
@@ -111,7 +130,7 @@ class ViewController: UIViewController {
       return
     }
     
-    let alert = UIAlertController(title: "Order request ready to be sent.", message: "Are you sure you finished your order?.", preferredStyle: .alert)
+    let alert = UIAlertController(title: "Order request ready to be sent.", message: "Are you sure you finished your order?", preferredStyle: .alert)
     alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {
       action in
       let order:Order = Order(name: self.nameLbl.text!, address: self.addressLbl.text!, numberOfSimpleCoffees: self.numberOfSimpleCoffees, numberOfOreoCoffees: self.numberOfOreoCoffees, numberOfKitKatCoffees: self.numberOfKitKatCoffees, numberOfToppingCoffees: self.numberOfToppingCoffees)
@@ -163,6 +182,29 @@ class ViewController: UIViewController {
     return isValid
   }
   
+  /// Keyboard delegate
+  func textFieldShouldReturn(textField: UITextField) -> Bool {
+      textField.resignFirstResponder()
+      return true
+  }
+  
+  @objc func keyboardWillShow(notification:NSNotification) {
+
+    let userInfo = notification.userInfo!
+    var keyboardFrame:CGRect = (userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
+      keyboardFrame = self.view.convert(keyboardFrame, from: nil)
+
+      var contentInset:UIEdgeInsets = self.scrollView.contentInset
+      contentInset.bottom = keyboardFrame.size.height
+      self.scrollView.contentInset = contentInset
+  }
+
+  @objc func keyboardWillHide(notification:NSNotification){
+
+      let contentInset:UIEdgeInsets = UIEdgeInsets.zero
+      self.scrollView.contentInset = contentInset
+  }
+  
   func calculateTotal() -> Int {
     return numberOfSimpleCoffees * 3 + numberOfOreoCoffees * 4 + numberOfKitKatCoffees * 4 + numberOfToppingCoffees * 5
   }
@@ -191,7 +233,6 @@ class ViewController: UIViewController {
       textField.layer.borderWidth = 0.5
     }
   }
-  
-  
+
 }
 

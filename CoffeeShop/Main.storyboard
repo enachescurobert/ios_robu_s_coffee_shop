@@ -499,6 +499,7 @@
                         <outlet property="kitKatCoffeeLbl" destination="oml-fm-KgC" id="Gwa-kY-Bsv"/>
                         <outlet property="nameLbl" destination="caV-vL-EYY" id="emQ-Lu-OLa"/>
                         <outlet property="oreoCoffeeLbl" destination="iT0-TL-Kvx" id="9EV-uw-np1"/>
+                        <outlet property="scrollView" destination="Bop-KP-u9O" id="YfL-SU-Pme"/>
                         <outlet property="sendOrderBtn" destination="0LU-fr-FTa" id="DNG-vf-Zbq"/>
                         <outlet property="simpleCoffeeLbl" destination="cnk-5p-mGI" id="G3W-hK-Va7"/>
                         <outlet property="toppingCoffeeLbl" destination="yCd-6Y-aBt" id="ERP-YV-dyc"/>
