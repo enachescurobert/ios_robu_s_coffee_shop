@@ -27,8 +27,8 @@ class ViewController: UIViewController {
   var numberOfToppingCoffees:Int = 0
   
   var ref: DatabaseReference!
-
-// MARK: - Lifecycle methods
+  
+  // MARK: - Lifecycle methods
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -36,7 +36,7 @@ class ViewController: UIViewController {
     
   }
   
-//  MARK: - IBActions
+  //  MARK: - IBActions
   @IBAction func incrementTheAmountOfCoffees(_ sender: UIButton) {
     
     switch sender.tag {
@@ -112,28 +112,30 @@ class ViewController: UIViewController {
     
     let alert = UIAlertController(title: "Order request ready to be sent.", message: "Are you sure you finished your order?.", preferredStyle: .alert)
     alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {
-        action in
+      action in
       let order:Order = Order(name: self.nameLbl.text!, address: self.addressLbl.text!, numberOfSimpleCoffees: self.numberOfSimpleCoffees, numberOfOreoCoffees: self.numberOfOreoCoffees, numberOfKitKatCoffees: self.numberOfKitKatCoffees, numberOfToppingCoffees: self.numberOfToppingCoffees)
       
-      if let newRefKey = self.ref.child("orders").childByAutoId().key {
-        self.ref.child("orders").child(newRefKey).setValue(order.getDictionaryForFirebase()) {
-          (error:Error?, ref:DatabaseReference) in
-          if let error = error {
-            print("Data could not be saved: \(error).")
-          } else {
-            print("Data saved successfully!")
-          }
+      guard let newRefKey = self.ref.child("orders").childByAutoId().key else { self.showAlert(title: "Request failed!", message: "Please try again later.")
+        return }
+      self.ref.child("orders").child(newRefKey).setValue(order.getDictionaryForFirebase()) {
+        (error:Error?, ref:DatabaseReference) in
+        if let error = error {
+          print("Data could not be saved: \(error).")
+          self.showAlert(title: "Request failed!", message: "Please try again later.")
+        } else {
+          print("Data saved successfully!")
+          self.showAlert(title: "Request sent!", message: "We'll deliver your order as fast as you can blink. Thank you for choosing our app.")
         }
-        
       }
       
-      }))
+      
+    }))
     alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-
+    
     self.present(alert, animated: true)
   }
   
-//  MARK: - Utility Methods
+  //  MARK: - Utility Methods
   fileprivate func showAlert(title: String, message: String) {
     let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
     alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { _ in
