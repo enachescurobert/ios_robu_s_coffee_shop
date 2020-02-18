@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1049722343135-qa9vomuf7hrt7rsierpjr20k9rh7em2r.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1049722343135-qa9vomuf7hrt7rsierpjr20k9rh7em2r</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1049722343135-bvc14f120g4qko1t1rs19prgja2ardho.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDnM8Kx6Z0C6crJ1CXNfZWUKzz_1JE9C2E</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1049722343135</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.robert.enachescu.CoffeeShop</string>
+	<key>PROJECT_ID</key>
+	<string>robu-s-coffee-shop</string>
+	<key>STORAGE_BUCKET</key>
+	<string>robu-s-coffee-shop.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1049722343135:ios:a1bfcdb6b7852bb391a36a</string>
+	<key>DATABASE_URL</key>
+	<string>https://robu-s-coffee-shop.firebaseio.com</string>
+</dict>
+</plist>
