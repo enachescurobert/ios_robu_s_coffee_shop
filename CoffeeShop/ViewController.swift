@@ -23,11 +23,13 @@ class ViewController: UIViewController {
   @IBOutlet weak var scrollView: UIScrollView!
   @IBOutlet weak var viewHeightConstraint: NSLayoutConstraint!
   
+
+  let phonePattern = "+## (###) ###-###"
+  
   var numberOfSimpleCoffees:Int = 0
   var numberOfOreoCoffees:Int = 0
   var numberOfKitKatCoffees:Int = 0
   var numberOfToppingCoffees:Int = 0
-  
   var ref: DatabaseReference!
   
   // MARK: - Lifecycle methods
@@ -102,13 +104,11 @@ class ViewController: UIViewController {
     
   }
   
-  
   @IBAction func phoneNumberEditingChanged(_ sender: Any) {
     
     guard let text = phoneTF.text else { return }
-    phoneTF.text = text.applyPatternOnNumbers(pattern: "+## (###) ###-###", replacmentCharacter: "#")
+    phoneTF.text = text.applyPatternOnNumbers(pattern: phonePattern, replacmentCharacter: "#")
   }
-  
   
   @IBAction func makeBill(_ sender: Any) {
     
@@ -144,7 +144,7 @@ class ViewController: UIViewController {
     let alert = UIAlertController(title: "Order request ready to be sent.", message: "Are you sure you finished your order?", preferredStyle: .alert)
     alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {
       action in
-      let order:Order = Order(name: self.nameLbl.text!, address: self.addressLbl.text!, numberOfSimpleCoffees: self.numberOfSimpleCoffees, numberOfOreoCoffees: self.numberOfOreoCoffees, numberOfKitKatCoffees: self.numberOfKitKatCoffees, numberOfToppingCoffees: self.numberOfToppingCoffees)
+      let order:Order = Order(name: self.nameLbl.text!, phone: self.phoneTF.text!, address: self.addressLbl.text!, numberOfSimpleCoffees: self.numberOfSimpleCoffees, numberOfOreoCoffees: self.numberOfOreoCoffees, numberOfKitKatCoffees: self.numberOfKitKatCoffees, numberOfToppingCoffees: self.numberOfToppingCoffees)
       
       guard let newRefKey = self.ref.child("orders").childByAutoId().key else { self.showAlert(title: "Request failed!", message: "Please try again later.")
         return }
@@ -186,6 +186,14 @@ class ViewController: UIViewController {
     } else if nameLbl.text == "" {
       showAlert(title: "Warning", message: "You must tell us your name")
       isValid = false
+    } else if phoneTF.text == "" {
+      showAlert(title: "Warning", message: "You must give us your phone number")
+      isValid = false
+    } else if let phoneDigits = phoneTF.text?.count {
+      if phoneDigits < phonePattern.count {
+          showAlert(title: "Warning", message: "You must enter a valid phone number")
+          isValid = false
+        }
     } else if addressLbl.text == "" {
       showAlert(title: "Warning", message: "You must tell us where to deliver your order")
       isValid = false
