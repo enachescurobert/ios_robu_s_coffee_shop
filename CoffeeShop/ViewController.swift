@@ -17,6 +17,7 @@ class ViewController: UIViewController {
   @IBOutlet weak var toppingCoffeeLbl: UILabel!
   @IBOutlet weak var billInfo: UILabel!
   @IBOutlet weak var nameLbl: UITextField!
+  @IBOutlet weak var phoneTF: UITextField!
   @IBOutlet weak var addressLbl: UITextField!
   @IBOutlet weak var sendOrderBtn: UIButton!
   @IBOutlet weak var scrollView: UIScrollView!
@@ -40,6 +41,7 @@ class ViewController: UIViewController {
   }
   
   override func viewWillAppear(_ animated: Bool) {
+    
     NotificationCenter.default.addObserver(
       self,
       selector: #selector(keyboardWillShow),
@@ -53,8 +55,8 @@ class ViewController: UIViewController {
   }
   
   override func viewWillDisappear(_ animated: Bool) {
-      super.viewWillDisappear(animated)
-      NotificationCenter.default.removeObserver(self)
+    super.viewWillDisappear(animated)
+    NotificationCenter.default.removeObserver(self)
   }
   
   //  MARK: - IBActions
@@ -99,6 +101,14 @@ class ViewController: UIViewController {
     }
     
   }
+  
+  
+  @IBAction func phoneNumberEditingChanged(_ sender: Any) {
+    
+    guard let text = phoneTF.text else { return }
+    phoneTF.text = text.applyPatternOnNumbers(pattern: "+## (###) ###-###", replacmentCharacter: "#")
+  }
+  
   
   @IBAction func makeBill(_ sender: Any) {
     
@@ -184,20 +194,20 @@ class ViewController: UIViewController {
   }
   
   @objc func keyboardWillShow(notification:NSNotification) {
-
+    
     let userInfo = notification.userInfo!
     var keyboardFrame:CGRect = (userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as! NSValue).cgRectValue
-      keyboardFrame = self.view.convert(keyboardFrame, from: nil)
-
-      var contentInset:UIEdgeInsets = self.scrollView.contentInset
-      contentInset.bottom = keyboardFrame.size.height
-      self.scrollView.contentInset = contentInset
+    keyboardFrame = self.view.convert(keyboardFrame, from: nil)
+    
+    var contentInset:UIEdgeInsets = self.scrollView.contentInset
+    contentInset.bottom = keyboardFrame.size.height
+    self.scrollView.contentInset = contentInset
   }
-
+  
   @objc func keyboardWillHide(notification:NSNotification){
-
-      let contentInset:UIEdgeInsets = UIEdgeInsets.zero
-      self.scrollView.contentInset = contentInset
+    
+    let contentInset:UIEdgeInsets = UIEdgeInsets.zero
+    self.scrollView.contentInset = contentInset
   }
   
   func calculateTotal() -> Int {
@@ -218,8 +228,11 @@ class ViewController: UIViewController {
   
   func updateUI() {
     addBorderColorTo(textFields:
-      [self.nameLbl,
-       self.addressLbl])
+      [
+        self.nameLbl,
+        self.addressLbl,
+        self.phoneTF
+    ])
   }
   
   func addBorderColorTo(textFields: [UITextField]){
@@ -228,22 +241,40 @@ class ViewController: UIViewController {
       textField.layer.borderWidth = 0.5
     }
   }
-
+  
 }
 
 // MARK: - Extensions
 extension UIViewController {
-    /// Call this once to dismiss open keyboards by tapping anywhere in the view controller
-    func setupHideKeyboardOnTap() {
-        self.view.addGestureRecognizer(self.endEditingRecognizer())
-      self.navigationController?.navigationBar.addGestureRecognizer(self.endEditingRecognizer())
-    }
+  /// Call this once to dismiss open keyboards by tapping anywhere in the view controller
+  func setupHideKeyboardOnTap() {
+    self.view.addGestureRecognizer(self.endEditingRecognizer())
+    self.navigationController?.navigationBar.addGestureRecognizer(self.endEditingRecognizer())
+  }
+  
+  /// Dismisses the keyboard from self.view
+  private func endEditingRecognizer() -> UIGestureRecognizer {
+    let tap = UITapGestureRecognizer(target: self.view, action: #selector(self.view.endEditing(_:)))
+    tap.cancelsTouchesInView = false
+    return tap
+  }
+}
 
-    /// Dismisses the keyboard from self.view
-    private func endEditingRecognizer() -> UIGestureRecognizer {
-        let tap = UITapGestureRecognizer(target: self.view, action: #selector(self.view.endEditing(_:)))
-        tap.cancelsTouchesInView = false
-        return tap
+extension String {
+  
+  func applyPatternOnNumbers(pattern: String, replacmentCharacter: Character) -> String {
+    var pureNumber = self.replacingOccurrences( of: "[^0-9]", with: "", options: .regularExpression)
+    for index in 0 ..< pattern.count {
+      guard index < pureNumber.count else { return pureNumber }
+      let stringIndex = String.Index(utf16Offset: index, in: self)
+      if pureNumber.count > pattern.count {
+        return String(pureNumber.prefix(pattern.count))
+      }
+      let patternCharacter = pattern[stringIndex]
+      guard patternCharacter != replacmentCharacter else { continue }
+      pureNumber.insert(patternCharacter, at: stringIndex)
     }
+    return pureNumber
+  }
 }
 
