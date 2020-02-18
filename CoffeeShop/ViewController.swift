@@ -34,6 +34,7 @@ class ViewController: UIViewController {
     
     ref = Database.database().reference()
     
+    updateUI()
   }
   
   //  MARK: - IBActions
@@ -176,6 +177,19 @@ class ViewController: UIViewController {
   
   func tryToDecrement(currentNumber: Int) -> Int {
     return currentNumber > 0 ? currentNumber - 1 : currentNumber
+  }
+  
+  func updateUI() {
+    addBorderColorTo(textFields:
+      [self.nameLbl,
+       self.addressLbl])
+  }
+  
+  func addBorderColorTo(textFields: [UITextField]){
+    for textField in textFields {
+      textField.layer.borderColor = UIColor.lightGray.cgColor
+      textField.layer.borderWidth = 0.5
+    }
   }
   
   
