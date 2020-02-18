@@ -28,4 +28,15 @@ struct Order {
     self.numberOfToppingCoffees = numberOfToppingCoffees
   }
   
+  func getDictionaryForFirebase() -> [String:String] {
+       let firebaseDict = ["name": self.name,
+                   "address": self.address,
+                   "numberOfSimpleCoffees": String(self.numberOfSimpleCoffees),
+                   "numberOfOreoCoffees": String(self.numberOfOreoCoffees),
+                   "numberOfKitKatCoffees": String(self.numberOfKitKatCoffees),
+                   "numberOfToppingCoffees": String(self.numberOfToppingCoffees)]
+
+    return firebaseDict
+  }
+  
 }

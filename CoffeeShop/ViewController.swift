@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ViewController: UIViewController {
   
@@ -24,10 +25,14 @@ class ViewController: UIViewController {
   var numberOfOreoCoffees:Int = 0
   var numberOfKitKatCoffees:Int = 0
   var numberOfToppingCoffees:Int = 0
+  
+  var ref: DatabaseReference!
 
 // MARK: - Lifecycle methods
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    ref = Database.database().reference()
     
   }
   
@@ -108,9 +113,19 @@ class ViewController: UIViewController {
     let alert = UIAlertController(title: "Order request ready to be sent.", message: "Are you sure you finished your order?.", preferredStyle: .alert)
     alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {
         action in
-      var order:Order = Order(name: self.nameLbl.text!, address: self.addressLbl.text!, numberOfSimpleCoffees: self.numberOfSimpleCoffees, numberOfOreoCoffees: self.numberOfOreoCoffees, numberOfKitKatCoffees: self.numberOfKitKatCoffees, numberOfToppingCoffees: self.numberOfToppingCoffees)
+      let order:Order = Order(name: self.nameLbl.text!, address: self.addressLbl.text!, numberOfSimpleCoffees: self.numberOfSimpleCoffees, numberOfOreoCoffees: self.numberOfOreoCoffees, numberOfKitKatCoffees: self.numberOfKitKatCoffees, numberOfToppingCoffees: self.numberOfToppingCoffees)
       
-      
+      if let newRefKey = self.ref.child("orders").childByAutoId().key {
+        self.ref.child("orders").child(newRefKey).setValue(order.getDictionaryForFirebase()) {
+          (error:Error?, ref:DatabaseReference) in
+          if let error = error {
+            print("Data could not be saved: \(error).")
+          } else {
+            print("Data saved successfully!")
+          }
+        }
+        
+      }
       
       }))
     alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
